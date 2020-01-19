@@ -8,3 +8,4 @@ from . import diffeq_layers
 from .coupling import *
 from .glow import *
 from .norm_flows import *
+from . import wrappers
