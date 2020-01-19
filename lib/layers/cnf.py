@@ -9,10 +9,18 @@ __all__ = ["CNF"]
 
 
 class CNF(nn.Module):
-    def __init__(self, odefunc, T=1.0, train_T=False, regularization_fns=None, solver='dopri5', atol=1e-5, rtol=1e-5):
+    def __init__(self,
+                 odefunc,
+                 T=1.0,
+                 train_T=False,
+                 regularization_fns=None,
+                 solver='dopri5',
+                 atol=1e-5,
+                 rtol=1e-5):
         super(CNF, self).__init__()
         if train_T:
-            self.register_parameter("sqrt_end_time", nn.Parameter(torch.sqrt(torch.tensor(T))))
+            self.register_parameter("sqrt_end_time",
+                                    nn.Parameter(torch.sqrt(torch.tensor(T))))
         else:
             self.register_buffer("sqrt_end_time", torch.sqrt(torch.tensor(T)))
 
@@ -39,7 +47,8 @@ class CNF(nn.Module):
             _logpz = logpz
 
         if integration_times is None:
-            integration_times = torch.tensor([0.0, self.sqrt_end_time * self.sqrt_end_time]).to(z)
+            integration_times = torch.tensor(
+                [0.0, self.sqrt_end_time * self.sqrt_end_time]).to(z)
         if reverse:
             integration_times = _flip(integration_times, 0)
 
@@ -54,8 +63,10 @@ class CNF(nn.Module):
                 self.odefunc,
                 (z, _logpz) + reg_states,
                 integration_times.to(z),
-                atol=[self.atol, self.atol] + [1e20] * len(reg_states) if self.solver == 'dopri5' else self.atol,
-                rtol=[self.rtol, self.rtol] + [1e20] * len(reg_states) if self.solver == 'dopri5' else self.rtol,
+                atol=[self.atol, self.atol] + [1e20] * len(reg_states)
+                if self.solver == 'dopri5' else self.atol,
+                rtol=[self.rtol, self.rtol] + [1e20] * len(reg_states)
+                if self.solver == 'dopri5' else self.rtol,
                 method=self.solver,
                 options=self.solver_options,
             )
@@ -91,5 +102,9 @@ class CNF(nn.Module):
 
 def _flip(x, dim):
     indices = [slice(None)] * x.dim()
-    indices[dim] = torch.arange(x.size(dim) - 1, -1, -1, dtype=torch.long, device=x.device)
+    indices[dim] = torch.arange(x.size(dim) - 1,
+                                -1,
+                                -1,
+                                dtype=torch.long,
+                                device=x.device)
     return x[tuple(indices)]
