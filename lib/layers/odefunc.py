@@ -334,6 +334,13 @@ class ODEfunc(nn.Module):
     def num_evals(self):
         return self._num_evals.item()
 
+    def parameters(self):
+        params = list(super().parameters())
+        target_x = self.diffeq.target_x
+        target_x.requires_grad_(True)
+        z = self.diffeq.z
+        return params + [target_x, z]
+
     def forward(self, t, states):
         assert len(states) >= 2
         y = states[0]
