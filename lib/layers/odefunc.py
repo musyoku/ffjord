@@ -99,6 +99,7 @@ class ODEnet(nn.Module):
     """
     Helper class to make neural nets for use in continuous normalizing flows
     """
+
     def __init__(self,
                  hidden_dims,
                  input_shape,
@@ -202,6 +203,7 @@ class AutoencoderDiffEqNet(nn.Module):
     """
     Helper class to make neural nets for use in continuous normalizing flows
     """
+
     def __init__(self,
                  hidden_dims,
                  input_shape,
@@ -342,7 +344,10 @@ class ODEfunc(nn.Module):
         self._num_evals += 1
 
         # convert to tensor
-        t = torch.tensor(t).type_as(y)
+        if isinstance(t, torch.Tensor):
+            t = t.type_as(y)
+        else:
+            t = torch.tensor(t).type_as(y)
         batchsize = y.shape[0]
 
         # Sample and fix the noise.
